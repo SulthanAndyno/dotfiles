@@ -1,0 +1,63 @@
+/* ==========================================================
+ * WLOGOUT FROSTED GLASS THEME (Catppuccin Mocha)
+ * ========================================================== */
+
+* {
+    all: unset;
+    background-image: none;
+    transition: 250ms cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+window {
+    background-color: rgba(30, 30, 46, 0.75);
+}
+
+button {
+    font-family: 'JetBrainsMono Nerd Font', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #cdd6f4;
+    background-color: rgba(24, 24, 37, 0.75);
+    border: 2px solid rgba(205, 214, 244, 0.12);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+    background-repeat: no-repeat;
+    background-position: center 30%;
+    background-size: 30%;
+    margin: 25px 15px;
+    padding-top: 100px;
+    padding-bottom: 25px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+button:focus,
+button:active,
+button:hover {
+    background-color: rgba(203, 166, 247, 0.25);
+    border: 2px solid #cba6f7;
+    box-shadow: 0 0 30px rgba(203, 166, 247, 0.5);
+    color: #cba6f7;
+    border-radius: 36px;
+    background-position: center 26%;
+}
+
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"));
+}
+
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"));
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"));
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"));
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"));
+}

@@ -1,0 +1,108 @@
+# ==========================================================
+# NIKKE Crimson Night
+# Author : Sulthan Andyno
+# Inspired by NIKKE × Kanagawa
+# ==========================================================
+
+# Main background
+theme[main_bg]="#09090b"
+
+# Main foreground
+theme[main_fg]="#d4d4d8"
+
+# Titles
+theme[title]="#8b1e2d"
+
+# Keyboard shortcuts
+theme[hi_fg]="#3d2b63"
+
+# Selected Process
+theme[selected_bg]="#16161f"
+theme[selected_fg]="#ffffff"
+
+# Disabled text
+theme[inactive_fg]="#6b7280"
+
+# Process misc
+theme[proc_misc]="#355c9a"
+
+# Box Borders
+theme[cpu_box]="#1d1833"
+theme[mem_box]="#1d1833"
+theme[net_box]="#1d1833"
+theme[proc_box]="#1d1833"
+
+# Divider
+theme[div_line]="#241d42"
+
+# --------------------------------------------------------
+# Temperature
+# --------------------------------------------------------
+
+theme[temp_start]="#355e3b"
+theme[temp_mid]="#8b6d1f"
+theme[temp_end]="#991b1b"
+
+# --------------------------------------------------------
+# CPU
+# --------------------------------------------------------
+
+theme[cpu_start]="#2d1b46"
+theme[cpu_mid]="#355c9a"
+theme[cpu_end]="#8b1e2d"
+
+# --------------------------------------------------------
+# FREE
+# --------------------------------------------------------
+
+theme[free_start]="#355e3b"
+theme[free_mid]="#355c9a"
+theme[free_end]="#2d1b46"
+
+# --------------------------------------------------------
+# CACHE
+# --------------------------------------------------------
+
+theme[cached_start]="#2d1b46"
+theme[cached_mid]="#355c9a"
+theme[cached_end]="#8b1e2d"
+
+# --------------------------------------------------------
+# AVAILABLE
+# --------------------------------------------------------
+
+theme[available_start]="#355e3b"
+theme[available_mid]="#355c9a"
+theme[available_end]="#2d1b46"
+
+# --------------------------------------------------------
+# USED
+# --------------------------------------------------------
+
+theme[used_start]="#355c9a"
+theme[used_mid]="#5c3566"
+theme[used_end]="#8b1e2d"
+
+# --------------------------------------------------------
+# DOWNLOAD
+# --------------------------------------------------------
+
+theme[download_start]="#355c9a"
+theme[download_mid]="#456bb0"
+theme[download_end]="#2d1b46"
+
+# --------------------------------------------------------
+# UPLOAD
+# --------------------------------------------------------
+
+theme[upload_start]="#5c3566"
+theme[upload_mid]="#8b1e2d"
+theme[upload_end]="#991b1b"
+
+# --------------------------------------------------------
+# PROCESS
+# --------------------------------------------------------
+
+theme[process_start]="#2d1b46"
+theme[process_mid]="#355c9a"
+theme[process_end]="#8b1e2d"
