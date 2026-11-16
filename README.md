@@ -31,7 +31,7 @@ Configured and fine-tuned specifically for:
 | **Dedicated GPU** | NVIDIA GeForce RTX 3050 Mobile (4GB GDDR6, Proprietary Drivers) |
 | **Memory** | 16 GB DDR5 @ 4800 MHz |
 | **Display** | 15.6" Full HD (1920x1080) IPS, 144Hz |
-| **Operating System** | Arch Linux (Kernel `linux-cachyos` / `linux` 6.18+) |
+| **Operating System** | Arch Linux |
 
 ---
 
@@ -135,5 +135,5 @@ This personal setup builds upon and draws heavy inspiration from the awesome ope
 ---
 
 <div align="center">
-  <sub>Maintained with ❤️ by <a href="https://github.com/SulthanAndyno">Sulthan Andyno</a></sub>
+  <sub>Maintained by <a href="https://github.com/SulthanAndyno">Sulthan Andyno</a></sub>
 </div>
