@@ -1,0 +1,128 @@
+/* ==========================================================
+ * SWAYNC NOTIFICATION & CONTROL CENTER
+ * Theme: Catppuccin Mocha + Crimson Night
+ * ========================================================== */
+
+* {
+  font-family: "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.control-center {
+  background: rgba(30, 30, 46, 0.92);
+  border: 2px solid rgba(224, 108, 117, 0.6);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  color: #cdd6f4;
+}
+
+/* Floating Notification Popups */
+.notification-row {
+  outline: none;
+  margin: 6px 0;
+}
+
+.notification {
+  background: rgba(30, 30, 46, 0.95);
+  border: 1px solid rgba(224, 108, 117, 0.5);
+  border-radius: 12px;
+  padding: 12px;
+  color: #cdd6f4;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.notification-content {
+  margin: 4px;
+}
+
+.summary {
+  font-size: 14px;
+  font-weight: bold;
+  color: #e06c75;
+}
+
+.body {
+  font-size: 12px;
+  color: #a6adc8;
+}
+
+/* Control Center Widgets */
+.widget-title {
+  color: #e06c75;
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.widget-title > button {
+  background: rgba(49, 50, 68, 0.6);
+  color: #cdd6f4;
+  border-radius: 8px;
+  border: none;
+  padding: 4px 10px;
+}
+
+.widget-title > button:hover {
+  background: #991b1b;
+  color: #ffffff;
+}
+
+.widget-dnd {
+  background: rgba(49, 50, 68, 0.5);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin: 6px 0;
+}
+
+.widget-dnd > switch {
+  border-radius: 12px;
+  background: #313244;
+}
+
+.widget-dnd > switch:checked {
+  background: #e06c75;
+}
+
+/* Volume & Brightness Sliders */
+.widget-volume, .widget-backlight {
+  background: rgba(49, 50, 68, 0.5);
+  border-radius: 10px;
+  padding: 6px 12px;
+  margin: 4px 0;
+}
+
+trough {
+  background: #313244;
+  border-radius: 6px;
+  min-height: 8px;
+}
+
+highlight {
+  background: #e06c75;
+  border-radius: 6px;
+}
+
+/* MPRIS Media Player Widget */
+.widget-mpris {
+  background: rgba(49, 50, 68, 0.6);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid rgba(224, 108, 117, 0.3);
+}
+
+.widget-mpris-player {
+  padding: 4px;
+}
+
+.widget-mpris-title {
+  font-weight: bold;
+  color: #f5e0dc;
+}
+
+.widget-mpris-subtitle {
+  color: #a6adc8;
+  font-size: 11px;
+}

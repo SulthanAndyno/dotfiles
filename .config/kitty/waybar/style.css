@@ -1,0 +1,134 @@
+* {
+    font-family: "JetBrainsMono Nerd Font", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: rgba(30, 30, 46, 0.88);
+    color: #cdd6f4;
+    border-radius: 12px;
+    border: 1px solid rgba(224, 108, 117, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition-property: background-color;
+    transition-duration: .3s;
+}
+
+#custom-launcher {
+    font-size: 16px;
+    color: #e06c75;
+    padding: 0 12px;
+    margin: 4px 2px;
+    border-radius: 8px;
+    background-color: rgba(49, 50, 68, 0.6);
+    transition: all 0.2s ease;
+}
+
+#custom-launcher:hover {
+    background-color: #991b1b;
+    color: #ffffff;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    background-color: transparent;
+    color: #a6adc8;
+    border-radius: 8px;
+    margin: 4px 2px;
+    transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+    background-color: #313244;
+    color: #cdd6f4;
+}
+
+#workspaces button.active {
+    background-color: #991b1b;
+    color: #f4f4f5;
+}
+
+#clock,
+#mpris,
+#battery,
+#backlight,
+#cpu,
+#temperature,
+#memory,
+#pulseaudio,
+#custom-notification,
+#custom-power,
+#tray {
+    padding: 2px 10px;
+    margin: 4px 2px;
+    border-radius: 8px;
+    background-color: rgba(49, 50, 68, 0.6);
+    color: #cdd6f4;
+    transition: all 0.2s ease;
+}
+
+#clock {
+    color: #cba6f7;
+    background-color: transparent;
+    font-size: 13px;
+}
+
+#mpris {
+    color: #f5c2e7;
+    background-color: rgba(49, 50, 68, 0.5);
+    border: 1px solid rgba(245, 194, 231, 0.3);
+}
+
+#cpu {
+    color: #f38ba8;
+}
+
+#temperature {
+    color: #fab387;
+}
+
+#temperature.critical {
+    background-color: #991b1b;
+    color: #ffffff;
+}
+
+#memory {
+    color: #74c7ec;
+}
+
+#backlight {
+    color: #fab387;
+}
+
+#pulseaudio {
+    color: #a6e3a1;
+}
+
+#battery {
+    color: #f9e2af;
+}
+
+#battery.charging, #battery.plugged {
+    color: #a6e3a1;
+}
+
+#custom-notification {
+    color: #e06c75;
+    font-size: 15px;
+    padding: 2px 8px;
+}
+
+#custom-notification:hover {
+    background-color: rgba(224, 108, 117, 0.2);
+}
+
+#custom-power {
+    color: #e06c75;
+    padding: 2px 8px;
+}
+
+#custom-power:hover {
+    background-color: #991b1b;
+    color: #ffffff;
+}
