@@ -1,0 +1,36 @@
+# OS & Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+*.bak
+*.old
+
+# Python & Environment
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Fish shell state & sessions (may contain history / secrets)
+fish_variables*
+
+# Quickshell runtime states & generated themes
+states.json
+notifications.json
+user/generated/
+.cache/
+
+# Sensitive & credential files
+*.env
+*.env.*
+*.key
+*.pem
+*.pfx
+*.cert
+*secret*
+*token*
+!*token_from_key*
+!*token-from-key*
