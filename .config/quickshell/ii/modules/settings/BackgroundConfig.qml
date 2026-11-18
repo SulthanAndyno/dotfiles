@@ -1,7 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
+import Quickshell.Io
 import qs.services
 import qs.modules.common
+import qs.modules.common.functions
 import qs.modules.common.widgets
 
 ContentPage {
@@ -612,6 +615,253 @@ ContentPage {
                     },
                 ]
             }
+        }
+    }
+
+    ContentSection {
+        icon: "waving_hand"
+        title: Translation.tr("Widget: Greeting & Status")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.greeting
+        }
+
+        ConfigSwitch {
+            buttonIcon: "monitoring"
+            text: Translation.tr("Show uptime & power chips")
+            checked: Config.options.background.widgets.greeting.showStatusChips
+            onCheckedChanged: {
+                Config.options.background.widgets.greeting.showStatusChips = checked;
+            }
+        }
+
+        MaterialTextArea {
+            Layout.fillWidth: true
+            placeholderText: Translation.tr("Display name")
+            text: Config.options.background.widgets.greeting.userName
+            onTextChanged: {
+                Config.options.background.widgets.greeting.userName = text;
+            }
+        }
+
+        MaterialTextArea {
+            Layout.fillWidth: true
+            placeholderText: Translation.tr("Subtitle tagline")
+            text: Config.options.background.widgets.greeting.subtitle
+            onTextChanged: {
+                Config.options.background.widgets.greeting.subtitle = text;
+            }
+        }
+    }
+
+    ContentSection {
+        icon: "checklist"
+        title: Translation.tr("Widget: Todo Note")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.todo
+        }
+
+        ConfigSwitch {
+            buttonIcon: "done_all"
+            text: Translation.tr("Show completed tasks")
+            checked: Config.options.background.widgets.todo.showCompleted
+            onCheckedChanged: {
+                Config.options.background.widgets.todo.showCompleted = checked;
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "format_list_numbered"
+            text: Translation.tr("Max visible tasks")
+            value: Config.options.background.widgets.todo.maxItems
+            from: 1
+            to: 12
+            stepSize: 1
+            onValueChanged: {
+                Config.options.background.widgets.todo.maxItems = value;
+            }
+        }
+
+        MaterialTextArea {
+            Layout.fillWidth: true
+            placeholderText: Translation.tr("Header title")
+            text: Config.options.background.widgets.todo.title
+            onTextChanged: {
+                Config.options.background.widgets.todo.title = text;
+            }
+        }
+    }
+
+    ContentSection {
+        icon: "photo_frame"
+        title: Translation.tr("Widget: Photo Frame")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.photo
+        }
+
+        ContentSubsection {
+            title: Translation.tr("Frame style")
+
+            ConfigSelectionArray {
+                currentValue: Config.options.background.widgets.photo.style
+                onSelected: newValue => {
+                    Config.options.background.widgets.photo.style = newValue;
+                }
+                options: [
+                    {
+                        displayName: Translation.tr("Polaroid"),
+                        icon: "crop_portrait",
+                        value: "polaroid"
+                    },
+                    {
+                        displayName: Translation.tr("Rounded"),
+                        icon: "rounded_corner",
+                        value: "rounded"
+                    }
+                ]
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "photo_size_select_large"
+            text: Translation.tr("Frame size (px)")
+            value: Config.options.background.widgets.photo.size
+            from: 140
+            to: 360
+            stepSize: 10
+            onValueChanged: {
+                Config.options.background.widgets.photo.size = value;
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "screen_rotation_alt"
+            text: Translation.tr("Polaroid tilt (deg)")
+            value: Config.options.background.widgets.photo.tilt
+            from: -10
+            to: 10
+            stepSize: 1
+            onValueChanged: {
+                Config.options.background.widgets.photo.tilt = value;
+            }
+        }
+
+        MaterialTextField {
+            Layout.fillWidth: true
+            placeholderText: Translation.tr("Image path")
+            text: Config.options.background.widgets.photo.imagePath
+            onEditingFinished: {
+                Config.options.background.widgets.photo.imagePath = text;
+            }
+        }
+
+        ConfigRow {
+            uniform: true
+
+            RippleButtonWithIcon {
+                Layout.fillWidth: true
+                materialIcon: "folder_open"
+                mainText: Translation.tr("Choose image")
+                onClicked: photoSettingsPicker.pick("--pick")
+            }
+
+            RippleButtonWithIcon {
+                Layout.fillWidth: true
+                materialIcon: "shuffle"
+                mainText: Translation.tr("Random image")
+                onClicked: photoSettingsPicker.pick("--random")
+            }
+        }
+
+        Process {
+            id: photoSettingsPicker
+            function pick(modeFlag) {
+                if (running) return;
+                const scriptPath = FileUtils.trimFileProtocol(`${Directories.scriptPath}/images/pick-image.py`);
+                command = ["python3", scriptPath, modeFlag, Config.options.background.widgets.photo.imagePath ?? ""];
+                running = true;
+            }
+            stdout: StdioCollector {
+                id: settingsPickerCollector
+                onStreamFinished: {
+                    const chosen = settingsPickerCollector.text.trim();
+                    if (chosen.length > 0) {
+                        Config.options.background.widgets.photo.imagePath = chosen;
+                    }
+                }
+            }
+        }
+
+        MaterialTextArea {
+            Layout.fillWidth: true
+            placeholderText: Translation.tr("Short caption")
+            text: Config.options.background.widgets.photo.caption
+            onTextChanged: {
+                Config.options.background.widgets.photo.caption = text;
+            }
+        }
+    }
+
+    ContentSection {
+        icon: "music_note"
+        title: Translation.tr("Widget: Now Playing")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.music
+        }
+
+        ConfigSwitch {
+            buttonIcon: "visibility_off"
+            text: Translation.tr("Hide automatically when no media is open")
+            checked: Config.options.background.widgets.music.hideWhenIdle
+            onCheckedChanged: {
+                Config.options.background.widgets.music.hideWhenIdle = checked;
+            }
+        }
+    }
+
+    component WidgetPlacementRow: ConfigRow {
+        id: placementRow
+        required property var widgetConfig
+        Layout.fillWidth: true
+
+        ConfigSwitch {
+            Layout.fillWidth: false
+            buttonIcon: "check"
+            text: Translation.tr("Enable")
+            checked: placementRow.widgetConfig.enable
+            onCheckedChanged: {
+                placementRow.widgetConfig.enable = checked;
+            }
+        }
+        Item {
+            Layout.fillWidth: true
+        }
+        ConfigSelectionArray {
+            Layout.fillWidth: false
+            currentValue: placementRow.widgetConfig.placementStrategy
+            onSelected: newValue => {
+                placementRow.widgetConfig.placementStrategy = newValue;
+            }
+            options: [
+                {
+                    displayName: Translation.tr("Draggable"),
+                    icon: "drag_pan",
+                    value: "free"
+                },
+                {
+                    displayName: Translation.tr("Least busy"),
+                    icon: "category",
+                    value: "leastBusy"
+                },
+                {
+                    displayName: Translation.tr("Most busy"),
+                    icon: "shapes",
+                    value: "mostBusy"
+                },
+            ]
         }
     }
 }

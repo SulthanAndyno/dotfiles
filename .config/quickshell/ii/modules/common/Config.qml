@@ -209,6 +209,42 @@ Singleton {
                         property real x: 400
                         property real y: 100
                     }
+                    property JsonObject greeting: JsonObject {
+                        property bool enable: true
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 92
+                        property real y: 44
+                        property string userName: "Shuu"
+                        property string subtitle: "Systems nominal"
+                        property bool showStatusChips: true
+                    }
+                    property JsonObject todo: JsonObject {
+                        property bool enable: true
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 1550
+                        property real y: 44
+                        property string title: "Today's Focus"
+                        property bool showCompleted: true
+                        property int maxItems: 6
+                    }
+                    property JsonObject photo: JsonObject {
+                        property bool enable: true
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 1620
+                        property real y: 710
+                        property string imagePath: "/home/Shuu/Pictures/Wallpapers/nikke.png"
+                        property string caption: "Shuu's Desk"
+                        property string style: "polaroid" // "polaroid", "rounded"
+                        property int size: 220
+                        property real tilt: 0
+                    }
+                    property JsonObject music: JsonObject {
+                        property bool enable: true
+                        property bool hideWhenIdle: true
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 82
+                        property real y: 145
+                    }
                 }
                 property string wallpaperPath: ""
                 property string thumbnailPath: ""
@@ -216,9 +252,9 @@ Singleton {
                 property JsonObject parallax: JsonObject {
                     property bool vertical: false
                     property bool autoVertical: false
-                    property bool enableWorkspace: false
+                    property bool enableWorkspace: true
                     property real workspaceZoom: 1.07 // Relative to wallpaper size
-                    property bool enableSidebar: false
+                    property bool enableSidebar: true
                     property real widgetsFactor: 1.2
                 }
             }
