@@ -25,6 +25,8 @@ hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/docker_ui.sh"), { description = "Docker UI Dashboard" })
 -- Git Commits & Activity Widget: SUPER + SHIFT + C
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("kitty --class git_widget -e bash /home/Shuu/.config/hypr/scripts/git_commit_widget.sh"), { description = "Git Commits & Activity Widget" })
+-- Localhost Port Killer & Opener: SUPER + SHIFT + K
+hl.bind(mainMod .. " + SHIFT + K", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/port_manager.sh"), { description = "Localhost Port Killer & Opener" })
 
 -- 5. WINDOW MANAGEMENT (ERGONOMIC FIXES)
 -- Real window closing (No annoying popup on Alt+F4)

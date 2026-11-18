@@ -77,6 +77,8 @@ end
 alias ff="fastfetch"
 alias cat="bat"
 alias top="btop"
+alias ports="bash $HOME/.config/hypr/scripts/port_manager.sh --list"
+alias killport="bash $HOME/.config/hypr/scripts/port_manager.sh --kill"
 
 # ----------------------------------------------------------
 # Custom Launchers
