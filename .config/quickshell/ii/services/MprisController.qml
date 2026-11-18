@@ -86,7 +86,7 @@ Singleton {
 		function onTrackArtUrlChanged() {
 			// console.log("arturl:", activePlayer.trackArtUrl)
 			// root.updateTrack();
-			if (root.activePlayer.uniqueId == root.activeTrack.uniqueId && root.activePlayer.trackArtUrl != root.activeTrack.artUrl) {
+			if (root.activePlayer.uniqueId == root.activeTrack.uniqueId && root.resolveArtUrl(root.activePlayer) != root.activeTrack.artUrl) {
 				// cantata likes to send cover updates *BEFORE* updating the track info.
 				// as such, art url changes shouldn't be able to break the reverse animation
 				const r = root.__reverse;
@@ -95,15 +95,35 @@ Singleton {
 
 			}
 		}
+
+		function onMetadataChanged() {
+			if (root.activePlayer && root.resolveArtUrl(root.activePlayer) !== root.activeTrack?.artUrl) {
+				const r = root.__reverse;
+				root.updateTrack();
+				root.__reverse = r;
+			}
+		}
 	}
 
 	onActivePlayerChanged: this.updateTrack();
+
+	// Resolve album art directly or derive YouTube thumbnails when browser MPRIS omits mpris:artUrl.
+	function resolveArtUrl(player) {
+		const direct = player?.trackArtUrl ?? "";
+		if (direct.length > 0) return direct;
+		const url = String(player?.metadata?.["xesam:url"] ?? "");
+		const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?.*?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+		if (ytMatch && ytMatch[1]) {
+			return `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+		}
+		return "";
+	}
 
 	function updateTrack() {
 		//console.log(`update: ${this.activePlayer?.trackTitle ?? ""} : ${this.activePlayer?.trackArtists}`)
 		this.activeTrack = {
 			uniqueId: this.activePlayer?.uniqueId ?? 0,
-			artUrl: this.activePlayer?.trackArtUrl ?? "",
+			artUrl: root.resolveArtUrl(this.activePlayer),
 			title: this.activePlayer?.trackTitle || Translation.tr("Unknown Title"),
 			artist: this.activePlayer?.trackArtist || Translation.tr("Unknown Artist"),
 			album: this.activePlayer?.trackAlbum || Translation.tr("Unknown Album"),

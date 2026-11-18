@@ -15,7 +15,7 @@ import Quickshell.Services.Mpris
 Item { // Player instance
     id: root
     required property MprisPlayer player
-    property var artUrl: player?.trackArtUrl
+    property var artUrl: MprisController.resolveArtUrl(player)
     property string artDownloadLocation: Directories.coverArt
     property string artFileName: Qt.md5(artUrl)
     property string artFilePath: `${artDownloadLocation}/${artFileName}`
@@ -26,7 +26,11 @@ Item { // Player instance
     property int visualizerSmoothing: 2 // Number of points to average for smoothing
     property real radius
 
-    property string displayedArtFilePath: root.downloaded ? Qt.resolvedUrl(artFilePath) : ""
+    property string displayedArtFilePath: {
+        if (!root.artUrl || root.artUrl.length === 0) return "";
+        if (root.artUrl.startsWith("file://")) return root.artUrl;
+        return root.downloaded ? Qt.resolvedUrl(artFilePath) : "";
+    }
 
     component TrackChangeButton: RippleButton {
         implicitWidth: 24
@@ -59,27 +63,35 @@ Item { // Player instance
         }
     }
 
-    onArtFilePathChanged: {
-        if (root.artUrl.length == 0) {
-            root.artDominantColor = Appearance.m3colors.m3secondaryContainer
+    function syncCoverArt() {
+        if (!root.artUrl || root.artUrl.length == 0) {
+            root.downloaded = false;
+            root.artDominantColor = Appearance.m3colors.m3secondaryContainer;
+            return;
+        }
+        if (root.artUrl.startsWith("file://")) {
+            root.downloaded = true;
             return;
         }
 
-        // Binding does not work in Process
-        coverArtDownloader.targetFile = root.artUrl 
-        coverArtDownloader.artFilePath = root.artFilePath
-        // Download
-        root.downloaded = false
-        coverArtDownloader.running = true
+        root.downloaded = false;
+        const cacheDir = FileUtils.trimFileProtocol(root.artDownloadLocation);
+        const destFile = FileUtils.trimFileProtocol(root.artFilePath);
+        coverArtDownloader.running = false;
+        coverArtDownloader.command = [
+            "bash", "-c",
+            `mkdir -p '${cacheDir}' && ([ -s '${destFile}' ] || curl -4 -fsSL '${root.artUrl}' -o '${destFile}')`
+        ];
+        coverArtDownloader.running = true;
     }
+
+    onArtFilePathChanged: syncCoverArt()
+    Component.onCompleted: syncCoverArt()
 
     Process { // Cover art downloader
         id: coverArtDownloader
-        property string targetFile: root.artUrl
-        property string artFilePath: root.artFilePath
-        command: [ "bash", "-c", `[ -f ${artFilePath} ] || curl -4 -sSL '${targetFile}' -o '${artFilePath}'` ]
         onExited: (exitCode, exitStatus) => {
-            root.downloaded = true
+            root.downloaded = (exitCode === 0);
         }
     }
 
@@ -177,6 +189,19 @@ Item { // Player instance
 
                     width: size
                     height: size
+                }
+
+                // Fallback music badge when no album/video art is available
+                Item {
+                    anchors.fill: parent
+                    visible: mediaArt.status !== Image.Ready
+
+                    MaterialSymbol {
+                        anchors.centerIn: parent
+                        iconSize: 38
+                        text: "music_note"
+                        color: blendedColors.colPrimary
+                    }
                 }
             }
 
