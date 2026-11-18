@@ -37,6 +37,10 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Window: Close
 hl.bind(mainMod .. " + Backslash", hl.dsp.layout("togglesplit"), { description = "Toggle split orientation" })
 
 -- 6. HARDWARE & POWER PROFILES
+-- Display / Screen Duplicate Menu (Windows-style Super+P): SUPER + P
+hl.unbind(mainMod .. " + P")
+hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/display_mode.sh"), { description = "Display & Screen Duplicate Menu" })
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.window.pin(), { description = "Window: Pin" })
 -- Power Mode Menu: SUPER + F8
 hl.bind(mainMod .. " + F8", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/power_profile_menu.sh"), { description = "Power Mode Menu" })
 -- Hardware & Fan Telemetry HUD: F9 langsung & SUPER + F9
