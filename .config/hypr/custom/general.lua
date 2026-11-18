@@ -9,3 +9,10 @@ hl.monitor({
     position = "0x0",
     scale    = 1,
 })
+
+-- Crisp 2px window border to showcase the dynamic Matugen gradient
+hl.config({
+    general = {
+        border_size = 2,
+    },
+})
