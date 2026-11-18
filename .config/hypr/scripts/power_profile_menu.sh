@@ -1,30 +1,29 @@
 #!/usr/bin/env bash
 # ==========================================================
 # POWER PROFILE SELECTOR MENU (Fuzzel GUI Selector)
-# Allows switching between Power Saver, Balanced, Performance
+# 4 Modes: Power Saver, Balanced Eco (60Hz), Balanced Smooth (144Hz), Performance
 # ==========================================================
 
-MONITOR="eDP-1"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AUTO_SCRIPT="${SCRIPT_DIR}/power_profile_auto.sh"
 
-CHOSEN=$(printf "🍃 Power Saver (60Hz • Hemat Baterai)\n🌊 Balanced (144Hz • Seimbang)\n🔥 Performance (144Hz • Performa Tinggi)" | fuzzel --dmenu -p "⚡ Mode Daya: " -l 3 -w 36)
+CHOSEN=$(printf "🍃 Power Saver (60Hz • Ultra Efficiency)\n🔋 Balanced Eco (60Hz • Battery Friendly)\n🌊 Balanced Smooth (144Hz • Cool & Fluid)\n🔥 Performance (144Hz • Max Power)" | fuzzel --dmenu -p "⚡ Power Mode: " -l 4 -w 46)
 
 case "$CHOSEN" in
     *Power\ Saver*)
-        command -v powerprofilesctl >/dev/null 2>&1 && powerprofilesctl set power-saver 2>/dev/null
-        command -v asusctl >/dev/null 2>&1 && asusctl profile set Quiet 2>/dev/null
-        hyprctl keyword monitor "${MONITOR},1920x1080@60,0x0,1"
-        notify-send -u low -i battery -a "Power Mode" "🍃 Power Saver Aktif" "Layar dialihkan ke 60Hz. Baterai lebih awet dan laptop adem."
+        "$AUTO_SCRIPT" --apply 60 power-saver Quiet
+        notify-send -u low -i battery -a "Power Mode" "🍃 Power Saver (60Hz)" "Maximum battery savings with 60Hz display and quiet cooling."
         ;;
-    *Balanced*)
-        command -v powerprofilesctl >/dev/null 2>&1 && powerprofilesctl set balanced 2>/dev/null
-        command -v asusctl >/dev/null 2>&1 && asusctl profile set Balanced 2>/dev/null
-        hyprctl keyword monitor "${MONITOR},1920x1080@144,0x0,1"
-        notify-send -u low -i battery-charging -a "Power Mode" "🌊 Balanced Mode Aktif" "Layar dialihkan ke 144Hz. Performa seimbang."
+    *Balanced\ Eco*)
+        "$AUTO_SCRIPT" --apply 60 balanced Balanced
+        notify-send -u low -i battery -a "Power Mode" "🔋 Balanced Eco (60Hz)" "60Hz display for battery life while keeping CPU responsive."
+        ;;
+    *Balanced\ Smooth*)
+        "$AUTO_SCRIPT" --apply 144 balanced Balanced
+        notify-send -u low -i battery-charging -a "Power Mode" "🌊 Balanced Smooth (144Hz)" "Fluid 144Hz display with balanced performance and quiet fans."
         ;;
     *Performance*)
-        command -v powerprofilesctl >/dev/null 2>&1 && powerprofilesctl set performance 2>/dev/null
-        command -v asusctl >/dev/null 2>&1 && asusctl profile set Performance 2>/dev/null
-        hyprctl keyword monitor "${MONITOR},1920x1080@144,0x0,1"
-        notify-send -u low -i local_fire_department -a "Power Mode" "🔥 Performance Mode Aktif" "Layar 144Hz. Performa maksimal ASUS TUF!"
+        "$AUTO_SCRIPT" --apply 144 performance Performance
+        notify-send -u low -i local_fire_department -a "Power Mode" "🔥 Performance (144Hz)" "Full ASUS TUF performance and 144Hz display enabled."
         ;;
 esac

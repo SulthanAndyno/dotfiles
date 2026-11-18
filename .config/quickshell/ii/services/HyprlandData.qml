@@ -163,4 +163,12 @@ Singleton {
             }
         }
     }
+
+    IpcHandler {
+        target: "hyprlandData"
+
+        function syncMonitors(): void {
+            root.updateMonitors();
+        }
+    }
 }
