@@ -98,7 +98,7 @@ StyledPopup {
 
             StyledPopupHeaderRow {
                 icon: "developer_board"
-                label: "GPU"
+                label: ResourceUsage.gpuLabel
             }
             Column {
                 spacing: 4
@@ -110,7 +110,9 @@ StyledPopup {
                 StyledPopupValueRow {
                     icon: "clock_loader_60"
                     label: Translation.tr("VRAM:")
-                    value: `${(ResourceUsage.gpuMemoryUsedMB / 1024).toFixed(1)} / ${(ResourceUsage.gpuMemoryTotalMB / 1024).toFixed(1)} GB`
+                    value: ResourceUsage.gpuMemoryTotalMB >= 1024
+                        ? `${(ResourceUsage.gpuMemoryUsedMB / 1024).toFixed(1)} / ${(ResourceUsage.gpuMemoryTotalMB / 1024).toFixed(1)} GB`
+                        : `${Math.round(ResourceUsage.gpuMemoryUsedMB)} / ${Math.round(ResourceUsage.gpuMemoryTotalMB)} MB`
                 }
                 StyledPopupValueRow {
                     icon: "device_thermostat"
