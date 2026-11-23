@@ -7,8 +7,8 @@ import Quickshell
 import Quickshell.Io
 
 /**
- * Polled resource usage service with RAM, Swap, CPU, and Smart Hybrid GPU usage.
- * Prefers AMD iGPU via sysfs when NVIDIA dGPU is suspended/idle so dGPU can enter D3cold.
+ * Polled resource usage service with RAM, Swap, CPU, and Dual Hybrid GPU (AMD iGPU + NVIDIA RTX 3050).
+ * Keeps sleeping NVIDIA dGPU in D3cold when suspended while exposing live metrics for both GPUs.
  */
 Singleton {
     id: root
@@ -23,20 +23,36 @@ Singleton {
     property real cpuUsage: 0
     property var previousCpuStats
 
-    property bool gpuAvailable: false
-    property string gpuLabel: "GPU"
-    property real gpuUsage: 0
-    property real gpuUsagePercentage: gpuUsage / 100.0
-    property real gpuMemoryUsedMB: 0
-    property real gpuMemoryTotalMB: 512
-    property real gpuTemp: 0
+    // Per-GPU metrics
+    property bool amdAvailable: false
+    property real amdUsage: 0
+    property real amdMemoryUsedMB: 0
+    property real amdMemoryTotalMB: 512
+    property real amdTemp: 0
 
-    // Smart hybrid GPU discovery & power-aware polling state
+    property bool nvAvailable: false
+    property bool nvSleeping: false
+    property bool nvWorking: false
+    property real nvUsage: 0
+    property real nvMemoryUsedMB: 0
+    property real nvMemoryTotalMB: 4096
+    property real nvTemp: 0
+
+    // Combined summary properties (used by bar gauge & any single-GPU callers)
+    property bool gpuAvailable: amdAvailable || nvAvailable
+    property string gpuLabel: nvWorking ? "RTX 3050" : (amdAvailable ? "iGPU (AMD)" : "RTX 3050")
+    property real gpuUsage: Math.max(amdAvailable ? amdUsage : 0, (nvAvailable && !nvSleeping) ? nvUsage : 0)
+    property real gpuUsagePercentage: gpuUsage / 100.0
+    property real gpuMemoryUsedMB: nvWorking ? nvMemoryUsedMB : (amdAvailable ? amdMemoryUsedMB : nvMemoryUsedMB)
+    property real gpuMemoryTotalMB: nvWorking ? nvMemoryTotalMB : (amdAvailable ? amdMemoryTotalMB : nvMemoryTotalMB)
+    property real gpuTemp: nvWorking ? nvTemp : (amdAvailable ? amdTemp : nvTemp)
+
+    // Discovery & polling control
     property bool gpuDetected: false
+    property bool popupOpen: false
     property string amdCardPath: ""
     property string amdTempPath: ""
     property string nvRuntimePath: ""
-    property bool nvWorking: false
     property int nvCooldownTicks: 0
 
     property string maxAvailableMemoryString: kbToGbString(ResourceUsage.memoryTotal)
@@ -63,15 +79,14 @@ Singleton {
         const totalText = fileAmdVramTotal.text().trim();
         if (busyText === "" && usedText === "" && totalText === "") return;
 
-        root.gpuLabel = "GPU (AMD)";
-        root.gpuUsage = parseFloat(busyText) || 0;
-        root.gpuMemoryUsedMB = (parseFloat(usedText) || 0) / (1024 * 1024);
-        root.gpuMemoryTotalMB = (parseFloat(totalText) || (512 * 1024 * 1024)) / (1024 * 1024);
+        root.amdUsage = parseFloat(busyText) || 0;
+        root.amdMemoryUsedMB = (parseFloat(usedText) || 0) / (1024 * 1024);
+        root.amdMemoryTotalMB = (parseFloat(totalText) || (512 * 1024 * 1024)) / (1024 * 1024);
         if (root.amdTempPath !== "") {
             const tempMilli = parseFloat(fileAmdTemp.text().trim());
-            if (!isNaN(tempMilli)) root.gpuTemp = tempMilli / 1000.0;
+            if (!isNaN(tempMilli)) root.amdTemp = tempMilli / 1000.0;
         }
-        root.gpuAvailable = true;
+        root.amdAvailable = true;
     }
 
     function reloadAmdFiles() {
@@ -80,6 +95,21 @@ Singleton {
         fileAmdVramUsed.reload();
         fileAmdVramTotal.reload();
         if (root.amdTempPath !== "") fileAmdTemp.reload();
+    }
+
+    function refreshNvNow() {
+        if (!root.gpuDetected || root.nvRuntimePath === "") return;
+        fileNvRuntime.reload();
+        const nvStatus = fileNvRuntime.text().trim();
+        if (nvStatus === "active") {
+            root.nvSleeping = false;
+            if (!gpuProc.running) gpuProc.running = true;
+        } else {
+            root.nvSleeping = true;
+            root.nvWorking = false;
+            root.nvUsage = 0;
+            root.nvMemoryUsedMB = 0;
+        }
     }
 
     function refreshGpuStats() {
@@ -92,31 +122,32 @@ Singleton {
             const nvStatus = fileNvRuntime.text().trim();
 
             if (nvStatus !== "active") {
-                // dGPU is sleeping (D3cold): stay off nvidia-smi so it stays asleep
+                // dGPU is sleeping (D3cold): keep sleeping without waking it via nvidia-smi
+                root.nvSleeping = true;
                 root.nvWorking = false;
+                root.nvUsage = 0;
+                root.nvMemoryUsedMB = 0;
                 root.nvCooldownTicks = 0;
-                root.applyAmdStats();
                 return;
             }
 
-            if (!root.nvWorking && root.nvCooldownTicks > 0) {
+            root.nvSleeping = false;
+            fileAcOnline.reload();
+            const onAc = fileAcOnline.text().trim() === "1";
+
+            // Poll nvidia-smi live when working, popup is open, on AC charger, or cooldown elapsed
+            if (root.nvWorking || root.popupOpen || onAc || root.nvCooldownTicks <= 0) {
+                root.nvCooldownTicks = 0;
+                if (!gpuProc.running) {
+                    gpuProc.running = true;
+                }
+            } else {
                 root.nvCooldownTicks -= 1;
-                root.applyAmdStats();
-                return;
-            }
-
-            if (!gpuProc.running) {
-                gpuProc.running = true;
-            }
-            if (!root.nvWorking) {
-                root.applyAmdStats();
             }
             return;
         }
 
-        if (root.amdCardPath !== "") {
-            root.applyAmdStats();
-        } else if (!gpuProc.running) {
+        if (!root.amdAvailable && !gpuProc.running) {
             gpuProc.running = true;
         }
     }
@@ -194,26 +225,27 @@ Singleton {
 
 	FileView { id: fileMeminfo; path: "/proc/meminfo" }
     FileView { id: fileStat; path: "/proc/stat" }
+    FileView { id: fileAcOnline; path: "/sys/class/power_supply/ACAD/online" }
 
     FileView {
         id: fileAmdBusy
         path: root.amdCardPath ? `${root.amdCardPath}/gpu_busy_percent` : ""
-        onLoaded: if (!root.nvWorking) root.applyAmdStats()
+        onLoaded: root.applyAmdStats()
     }
     FileView {
         id: fileAmdVramUsed
         path: root.amdCardPath ? `${root.amdCardPath}/mem_info_vram_used` : ""
-        onLoaded: if (!root.nvWorking) root.applyAmdStats()
+        onLoaded: root.applyAmdStats()
     }
     FileView {
         id: fileAmdVramTotal
         path: root.amdCardPath ? `${root.amdCardPath}/mem_info_vram_total` : ""
-        onLoaded: if (!root.nvWorking) root.applyAmdStats()
+        onLoaded: root.applyAmdStats()
     }
     FileView {
         id: fileAmdTemp
         path: root.amdTempPath ? root.amdTempPath : ""
-        onLoaded: if (!root.nvWorking) root.applyAmdStats()
+        onLoaded: root.applyAmdStats()
     }
     FileView {
         id: fileNvRuntime
@@ -233,9 +265,15 @@ Singleton {
             onStreamFinished: {
                 const lines = detectGpuCollector.text.trim().split("\n");
                 for (const line of lines) {
-                    if (line.startsWith("AMD_CARD=")) root.amdCardPath = line.slice(9).trim();
-                    else if (line.startsWith("AMD_TEMP=")) root.amdTempPath = line.slice(9).trim();
-                    else if (line.startsWith("NV_RUNTIME=")) root.nvRuntimePath = line.slice(11).trim();
+                    if (line.startsWith("AMD_CARD=")) {
+                        root.amdCardPath = line.slice(9).trim();
+                        root.amdAvailable = true;
+                    } else if (line.startsWith("AMD_TEMP=")) {
+                        root.amdTempPath = line.slice(9).trim();
+                    } else if (line.startsWith("NV_RUNTIME=")) {
+                        root.nvRuntimePath = line.slice(11).trim();
+                        root.nvAvailable = true;
+                    }
                 }
                 root.gpuDetected = true;
                 root.refreshGpuStats();
@@ -258,37 +296,26 @@ Singleton {
                 if (out.length > 0) {
                     const parts = out.split(",").map(p => p.trim());
                     if (parts.length >= 4) {
-                        const nvUsage = parseFloat(parts[0]) || 0;
-                        const nvUsedMB = parseFloat(parts[1]) || 0;
-                        const nvTotalMB = parseFloat(parts[2]) || 4096;
-                        const nvTempVal = parseFloat(parts[3]) || 0;
-
-                        // Only switch telemetry to RTX if dGPU is actively doing work
-                        const isWorking = (nvUsage > 0) || (nvUsedMB >= 80);
-                        if (isWorking || root.amdCardPath === "") {
-                            root.nvWorking = true;
-                            root.nvCooldownTicks = 0;
-                            root.gpuLabel = "GPU (RTX)";
-                            root.gpuUsage = nvUsage;
-                            root.gpuMemoryUsedMB = nvUsedMB;
-                            root.gpuMemoryTotalMB = nvTotalMB;
-                            root.gpuTemp = nvTempVal;
-                            root.gpuAvailable = true;
-                        } else {
-                            // Back off nvidia-smi for ~30s so RTD3 autosuspend can put RTX to sleep
-                            root.nvWorking = false;
+                        root.nvUsage = parseFloat(parts[0]) || 0;
+                        root.nvMemoryUsedMB = parseFloat(parts[1]) || 0;
+                        root.nvMemoryTotalMB = parseFloat(parts[2]) || 4096;
+                        root.nvTemp = parseFloat(parts[3]) || 0;
+                        root.nvAvailable = true;
+                        root.nvSleeping = false;
+                        root.nvWorking = (root.nvUsage > 0) || (root.nvMemoryUsedMB >= 80);
+                        if (!root.nvWorking) {
                             root.nvCooldownTicks = 10;
-                            root.applyAmdStats();
+                        } else {
+                            root.nvCooldownTicks = 0;
                         }
                     }
                 }
             }
         }
         onExited: (exitCode, exitStatus) => {
-            if (exitCode !== 0 && root.amdCardPath !== "") {
+            if (exitCode !== 0) {
                 root.nvWorking = false;
                 root.nvCooldownTicks = 10;
-                root.applyAmdStats();
             }
         }
     }
