@@ -45,7 +45,7 @@ Singleton {
             case ScreenshotAction.Action.Copy:
                 if (saveDir === "") {
                     // not saving the screenshot, just copy to clipboard
-                    return ["bash", "-c", `${cropToStdout} | wl-copy && ${cleanup}`]
+                    return ["bash", "-c", `${cropToStdout} | wl-copy -t image/png && ${cleanup}`]
                     break;
                 }
                 return [
@@ -53,7 +53,9 @@ Singleton {
                     `mkdir -p '${StringUtils.shellSingleQuoteEscape(saveDir)}' && \
                     saveFileName="screenshot-$(date '+%Y-%m-%d_%H.%M.%S').png" && \
                     savePath="${saveDir}/$saveFileName" && \
-                    ${cropToStdout} | tee >(wl-copy) > "$savePath" && \
+                    ${cropToStdout} > "$savePath" && \
+                    wl-copy -t image/png < "$savePath" && \
+                    notify-send -u low -i "$savePath" -a "Screenshot" "Screenshot Copied & Saved 📸" "$saveFileName" && \
                     ${cleanup}`
                 ]
 

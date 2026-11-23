@@ -14,9 +14,11 @@ hl.unbind(mainMod .. " + E")
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("nautilus --new-window"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("zen-browser"))
 
--- 3. SCREENSHOTS (Area Snipping & Fullscreen -> /home/Shuu/Pictures/Screenshots)
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/Shuu/.config/hypr/scripts/screenshot.sh"), { description = "Area Snipping Screenshot" })
-hl.bind("Print", hl.dsp.exec_cmd("mkdir -p /home/Shuu/Pictures/Screenshots && file=\"/home/Shuu/Pictures/Screenshots/Screenshot_$(date +'%Y-%m-%d_%H-%M-%S').png\" && grim \"$file\" && wl-copy < \"$file\" && notify-send -i \"$file\" -a 'Screenshot' 'Fullscreen Captured 📸' 'Disimpan ke Pictures/Screenshots'"), { locked = true, description = "Fullscreen Screenshot" })
+-- 3. SCREENSHOTS (Quickshell Overlay: Super+Shift+S | Quick Slurp: Super+Alt+S | Fullscreen: Print)
+hl.unbind(mainMod .. " + ALT + S")
+hl.bind(mainMod .. " + ALT + S", hl.dsp.exec_cmd("/home/Shuu/.config/hypr/scripts/screenshot.sh"), { description = "Quick Area Screenshot (slurp)" })
+hl.unbind("Print")
+hl.bind("Print", hl.dsp.exec_cmd("mkdir -p /home/Shuu/Pictures/Screenshots && file=\"/home/Shuu/Pictures/Screenshots/Screenshot_$(date +'%Y-%m-%d_%H-%M-%S').png\" && grim \"$file\" && wl-copy -t image/png < \"$file\" && notify-send -i \"$file\" -a 'Screenshot' 'Fullscreen Captured 📸' 'Disimpan ke Pictures/Screenshots & disalin ke clipboard'"), { locked = true, description = "Fullscreen Screenshot" })
 
 -- 4. DEVELOPER DASHBOARDS & WIDGETS (FLOATING UI)
 -- Lazygit / GitHub UI: SUPER + SHIFT + G
