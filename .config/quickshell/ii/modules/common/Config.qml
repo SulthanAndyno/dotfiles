@@ -245,6 +245,15 @@ Singleton {
                         property real x: 82
                         property real y: 145
                     }
+                    property JsonObject devServer: JsonObject {
+                        property bool enable: true
+                        property bool hideWhenIdle: false
+                        property bool showSystemPorts: false
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 92
+                        property real y: 740
+                        property int maxItems: 5
+                    }
                 }
                 property string wallpaperPath: ""
                 property string thumbnailPath: ""

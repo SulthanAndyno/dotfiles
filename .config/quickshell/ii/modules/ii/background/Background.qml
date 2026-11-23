@@ -21,6 +21,7 @@ import qs.modules.ii.background.widgets.greeting
 import qs.modules.ii.background.widgets.todo
 import qs.modules.ii.background.widgets.photo
 import qs.modules.ii.background.widgets.music
+import qs.modules.ii.background.widgets.devserver
 
 Variants {
     id: root
@@ -318,6 +319,17 @@ Variants {
                     shown: Config.options.background.widgets.music.enable
                         && (!Config.options.background.widgets.music.hideWhenIdle || MprisController.activePlayer !== null)
                     sourceComponent: MusicWidget {
+                        screenWidth: bgRoot.screen.width
+                        screenHeight: bgRoot.screen.height
+                        scaledScreenWidth: bgRoot.screen.width
+                        scaledScreenHeight: bgRoot.screen.height
+                        wallpaperScale: 1
+                    }
+                }
+
+                FadeLoader {
+                    shown: Config.options.background.widgets.devServer.enable
+                    sourceComponent: DevServerWidget {
                         screenWidth: bgRoot.screen.width
                         screenHeight: bgRoot.screen.height
                         scaledScreenWidth: bgRoot.screen.width

@@ -822,6 +822,45 @@ ContentPage {
         }
     }
 
+    ContentSection {
+        icon: "lan"
+        title: Translation.tr("Widget: Dev Servers")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.devServer
+        }
+
+        ConfigSwitch {
+            buttonIcon: "visibility_off"
+            text: Translation.tr("Hide automatically when no dev servers are listening")
+            checked: Config.options.background.widgets.devServer.hideWhenIdle
+            onCheckedChanged: {
+                Config.options.background.widgets.devServer.hideWhenIdle = checked;
+            }
+        }
+
+        ConfigSwitch {
+            buttonIcon: "filter_list"
+            text: Translation.tr("Include system ports (hidden PID)")
+            checked: Config.options.background.widgets.devServer.showSystemPorts
+            onCheckedChanged: {
+                Config.options.background.widgets.devServer.showSystemPorts = checked;
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "format_list_numbered"
+            text: Translation.tr("Max visible ports")
+            value: Config.options.background.widgets.devServer.maxItems
+            from: 1
+            to: 10
+            stepSize: 1
+            onValueChanged: {
+                Config.options.background.widgets.devServer.maxItems = value;
+            }
+        }
+    }
+
     component WidgetPlacementRow: ConfigRow {
         id: placementRow
         required property var widgetConfig
