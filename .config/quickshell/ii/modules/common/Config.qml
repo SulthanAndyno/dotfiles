@@ -254,6 +254,16 @@ Singleton {
                         property real y: 740
                         property int maxItems: 5
                     }
+                    property JsonObject calendar: JsonObject {
+                        property bool enable: true
+                        property bool startMonday: true
+                        property bool showDeadlines: true
+                        property int maxDeadlines: 4
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 1580
+                        property real y: 540
+                        property list<var> deadlines: []
+                    }
                 }
                 property string wallpaperPath: ""
                 property string thumbnailPath: ""

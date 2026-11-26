@@ -22,6 +22,7 @@ import qs.modules.ii.background.widgets.todo
 import qs.modules.ii.background.widgets.photo
 import qs.modules.ii.background.widgets.music
 import qs.modules.ii.background.widgets.devserver
+import qs.modules.ii.background.widgets.calendar
 
 Variants {
     id: root
@@ -330,6 +331,17 @@ Variants {
                 FadeLoader {
                     shown: Config.options.background.widgets.devServer.enable
                     sourceComponent: DevServerWidget {
+                        screenWidth: bgRoot.screen.width
+                        screenHeight: bgRoot.screen.height
+                        scaledScreenWidth: bgRoot.screen.width
+                        scaledScreenHeight: bgRoot.screen.height
+                        wallpaperScale: 1
+                    }
+                }
+
+                FadeLoader {
+                    shown: Config.options.background.widgets.calendar.enable
+                    sourceComponent: CalendarWidget {
                         screenWidth: bgRoot.screen.width
                         screenHeight: bgRoot.screen.height
                         scaledScreenWidth: bgRoot.screen.width

@@ -861,6 +861,102 @@ ContentPage {
         }
     }
 
+    ContentSection {
+        icon: "calendar_month"
+        title: Translation.tr("Widget: Calendar & Deadlines")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.calendar
+        }
+
+        ConfigRow {
+            uniform: true
+
+            ConfigSwitch {
+                buttonIcon: "date_range"
+                text: Translation.tr("Start week on Monday")
+                checked: Config.options.background.widgets.calendar.startMonday
+                onCheckedChanged: {
+                    Config.options.background.widgets.calendar.startMonday = checked;
+                }
+            }
+
+            ConfigSwitch {
+                buttonIcon: "event_upcoming"
+                text: Translation.tr("Show deadline countdowns")
+                checked: Config.options.background.widgets.calendar.showDeadlines
+                onCheckedChanged: {
+                    Config.options.background.widgets.calendar.showDeadlines = checked;
+                }
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "format_list_numbered"
+            text: Translation.tr("Max visible deadlines")
+            value: Config.options.background.widgets.calendar.maxDeadlines
+            from: 1
+            to: 8
+            stepSize: 1
+            onValueChanged: {
+                Config.options.background.widgets.calendar.maxDeadlines = value;
+            }
+        }
+
+        ConfigRow {
+            uniform: true
+
+            RippleButtonWithIcon {
+                Layout.fillWidth: true
+                materialIcon: "add_task"
+                mainText: Translation.tr("Add deadline")
+                onClicked: calendarAddProc.open()
+            }
+
+            RippleButtonWithIcon {
+                Layout.fillWidth: true
+                materialIcon: "event_busy"
+                mainText: Translation.tr("Clear past")
+                onClicked: {
+                    const now = new Date();
+                    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                    const current = Config.options.background.widgets.calendar.deadlines ?? [];
+                    Config.options.background.widgets.calendar.deadlines = current.filter(item => {
+                        if (!item || !item.date) return false;
+                        const p = String(item.date).split("-");
+                        if (p.length !== 3) return false;
+                        const dt = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)).getTime();
+                        return !isNaN(dt) && dt >= todayMidnight;
+                    });
+                }
+            }
+        }
+
+        Process {
+            id: calendarAddProc
+            function open() {
+                if (running) return;
+                const scriptPath = FileUtils.trimFileProtocol(`${Directories.scriptPath}/calendar/add-deadline.py`);
+                command = ["python3", scriptPath];
+                running = true;
+            }
+            stdout: StdioCollector {
+                id: calendarAddCollector
+                onStreamFinished: {
+                    const raw = calendarAddCollector.text.trim();
+                    if (raw.length === 0) return;
+                    try {
+                        const entry = JSON.parse(raw);
+                        if (entry.title && entry.date) {
+                            const current = Config.options.background.widgets.calendar.deadlines ?? [];
+                            Config.options.background.widgets.calendar.deadlines = [...current, { title: entry.title, date: entry.date }];
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
+    }
+
     component WidgetPlacementRow: ConfigRow {
         id: placementRow
         required property var widgetConfig
