@@ -39,6 +39,8 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Window: Close
 
 -- Split orientation toggle (Vertical <-> Horizontal tiling for Code & Terminal)
 hl.bind(mainMod .. " + Backslash", hl.dsp.layout("togglesplit"), { description = "Toggle split orientation" })
+-- Smart Window Switcher (cross-workspace MRU): ALT + Tab
+hl.bind("ALT + Tab", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/window_switcher.sh"), { description = "Smart Window Switcher" })
 
 -- 6. HARDWARE & POWER PROFILES
 -- Display / Screen Duplicate Menu (Windows-style Super+P): SUPER + P
