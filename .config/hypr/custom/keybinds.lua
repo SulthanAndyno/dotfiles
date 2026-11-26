@@ -51,6 +51,9 @@ hl.bind(mainMod .. " + F8", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/script
 hl.bind("F9", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/hw_stats.sh"), { description = "Check Temp & Fan Speed (F9)" })
 hl.bind("XF86Display", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/hw_stats.sh"), { locked = true, description = "Check Temp & Fan Speed" })
 hl.bind(mainMod .. " + F9", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/hw_stats.sh"), { description = "Check Temp & Fan Speed" })
+-- Instant OCR Snipping Tool: SUPER + SHIFT + T
+hl.unbind(mainMod .. " + SHIFT + T")
+hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/ocr_snip.sh"), { description = "Instant OCR Snipping Tool" })
 
 -- 7. FROSTED POWER MENU OVERLAY (WLOGOUT)
 hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("wlogout -b 5 -c 0 -r 0 -m 0"), { description = "Frosted Glass Power Menu" })
