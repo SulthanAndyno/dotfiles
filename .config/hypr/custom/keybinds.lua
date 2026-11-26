@@ -59,6 +59,10 @@ hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr
 -- One-Tap Redmi Buds Bluetooth Toggle: SUPER + SHIFT + B
 hl.unbind(mainMod .. " + SHIFT + B")
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/tws_toggle.sh"), { description = "Toggle Redmi Buds Bluetooth" })
+-- Presentation DND, Night Light Eye-Care & Caffeine Keep-Awake
+hl.bind(mainMod .. " + ALT + D", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/quick_modes.sh --dnd"), { description = "Toggle Presentation Do-Not-Disturb" })
+hl.bind(mainMod .. " + ALT + N", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/quick_modes.sh --nightlight"), { description = "Toggle Night Light Eye-Care" })
+hl.bind(mainMod .. " + ALT + K", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/quick_modes.sh --caffeine"), { description = "Toggle Caffeine Keep Awake" })
 
 -- 7. FROSTED POWER MENU OVERLAY (WLOGOUT)
 hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("wlogout -b 5 -c 0 -r 0 -m 0"), { description = "Frosted Glass Power Menu" })

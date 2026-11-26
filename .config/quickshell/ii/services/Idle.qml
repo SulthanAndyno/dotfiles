@@ -2,6 +2,7 @@ pragma Singleton
 import qs.modules.common
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 
 /**
@@ -31,6 +32,19 @@ Singleton {
             root.inhibit = !root.inhibit;
         }
         Persistent.states.idle.inhibit = root.inhibit;
+    }
+
+    IpcHandler {
+        target: "idle"
+
+        function toggle(): string {
+            root.toggleInhibit();
+            return root.inhibit ? "ON" : "OFF";
+        }
+
+        function status(): string {
+            return root.inhibit ? "ON" : "OFF";
+        }
     }
 
     IdleInhibitor {

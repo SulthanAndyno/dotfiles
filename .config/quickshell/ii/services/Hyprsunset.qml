@@ -169,4 +169,17 @@ Singleton {
             Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", `${Config.options.light.night.colorTemperature}`]);
         }
     }
+
+    IpcHandler {
+        target: "nightlight"
+
+        function toggle(): string {
+            root.toggleTemperature();
+            return root.temperatureActive ? "ON" : "OFF";
+        }
+
+        function status(): string {
+            return root.temperatureActive ? "ON" : "OFF";
+        }
+    }
 }

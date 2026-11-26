@@ -260,6 +260,19 @@ Singleton {
         notifFileView.reload()
     }
 
+    IpcHandler {
+        target: "notifications"
+
+        function toggleSilent(): string {
+            root.silent = !root.silent;
+            return root.silent ? "ON" : "OFF";
+        }
+
+        function statusSilent(): string {
+            return root.silent ? "ON" : "OFF";
+        }
+    }
+
     Component.onCompleted: {
         refresh()
     }
