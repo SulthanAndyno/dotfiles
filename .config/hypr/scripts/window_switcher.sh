@@ -23,4 +23,4 @@ SELECTED=$(printf "%s\n" "$WINDOWS_RAW" | fuzzel --dmenu --match-mode fzf -p "ðŸ
 [ -z "$SELECTED" ] && exit 0
 
 ADDR=$(printf "%s" "$SELECTED" | sed -n 's/.*(\(0x[0-9a-fA-F]*\))$/\1/p')
-[ -n "$ADDR" ] && hyprctl dispatch focuswindow "address:${ADDR}" >/dev/null 2>&1
+[ -n "$ADDR" ] && hyprctl eval "hl.dispatch(hl.dsp.focus({ window = \"address:${ADDR}\" }))" >/dev/null 2>&1
