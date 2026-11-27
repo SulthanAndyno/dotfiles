@@ -163,8 +163,10 @@ Singleton {
 
             property JsonObject background: JsonObject {
                 property JsonObject widgets: JsonObject {
+                    property bool lockAll: false
                     property JsonObject clock: JsonObject {
                         property bool enable: true
+                        property bool locked: false
                         property bool showOnlyWhenLocked: false
                         property string placementStrategy: "leastBusy" // "free", "leastBusy", "mostBusy"
                         property real x: 100
@@ -205,12 +207,14 @@ Singleton {
                     }
                     property JsonObject weather: JsonObject {
                         property bool enable: false
+                        property bool locked: false
                         property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
                         property real x: 400
                         property real y: 100
                     }
                     property JsonObject greeting: JsonObject {
                         property bool enable: true
+                        property bool locked: false
                         property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
                         property real x: 92
                         property real y: 44
@@ -220,6 +224,7 @@ Singleton {
                     }
                     property JsonObject todo: JsonObject {
                         property bool enable: true
+                        property bool locked: false
                         property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
                         property real x: 1550
                         property real y: 44
@@ -229,6 +234,7 @@ Singleton {
                     }
                     property JsonObject photo: JsonObject {
                         property bool enable: true
+                        property bool locked: false
                         property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
                         property real x: 1620
                         property real y: 710
@@ -240,6 +246,7 @@ Singleton {
                     }
                     property JsonObject music: JsonObject {
                         property bool enable: true
+                        property bool locked: false
                         property bool hideWhenIdle: true
                         property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
                         property real x: 82
@@ -247,6 +254,7 @@ Singleton {
                     }
                     property JsonObject devServer: JsonObject {
                         property bool enable: true
+                        property bool locked: false
                         property bool hideWhenIdle: false
                         property bool showSystemPorts: false
                         property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
@@ -256,6 +264,7 @@ Singleton {
                     }
                     property JsonObject calendar: JsonObject {
                         property bool enable: true
+                        property bool locked: false
                         property bool startMonday: true
                         property bool showDeadlines: true
                         property int maxDeadlines: 4
@@ -263,6 +272,35 @@ Singleton {
                         property real x: 1580
                         property real y: 540
                         property list<var> deadlines: []
+                    }
+                    property JsonObject gitPulse: JsonObject {
+                        property bool enable: true
+                        property bool locked: false
+                        property bool showClean: false
+                        property bool hideWhenClean: false
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 450
+                        property real y: 40
+                        property int maxItems: 5
+                    }
+                    property JsonObject docker: JsonObject {
+                        property bool enable: true
+                        property bool locked: false
+                        property bool hideWhenOff: false
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 820
+                        property real y: 40
+                        property int maxItems: 5
+                    }
+                    property JsonObject githubStreak: JsonObject {
+                        property bool enable: true
+                        property bool locked: false
+                        property string username: "SulthanAndyno"
+                        property int weeksShown: 20
+                        property bool useGithubGreen: true
+                        property string placementStrategy: "free" // "free", "leastBusy", "mostBusy"
+                        property real x: 1090
+                        property real y: 260
                     }
                 }
                 property string wallpaperPath: ""

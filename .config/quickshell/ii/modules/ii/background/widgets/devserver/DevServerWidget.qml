@@ -58,7 +58,7 @@ AbstractBackgroundWidget {
 
     Timer {
         id: pollTimer
-        interval: 4000
+        interval: 30000
         running: Config.options.background.widgets.devServer.enable && !GlobalStates.screenLocked
         repeat: true
         triggeredOnStart: true

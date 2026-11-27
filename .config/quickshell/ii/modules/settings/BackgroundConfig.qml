@@ -56,6 +56,20 @@ ContentPage {
     }
 
     ContentSection {
+        icon: "widgets"
+        title: Translation.tr("Desktop Widgets")
+
+        ConfigSwitch {
+            buttonIcon: Config.options.background.widgets.lockAll ? "lock" : "lock_open"
+            text: Translation.tr("Lock all widget positions")
+            checked: Config.options.background.widgets.lockAll
+            onCheckedChanged: {
+                Config.options.background.widgets.lockAll = checked;
+            }
+        }
+    }
+
+    ContentSection {
         id: settingsClock
         icon: "clock_loader_40"
         title: Translation.tr("Widget: Clock")
@@ -73,45 +87,8 @@ ContentPage {
         readonly property bool digitalPresent: stylePresent("digital")
         readonly property bool cookiePresent: stylePresent("cookie")
 
-        ConfigRow {
-            Layout.fillWidth: true
-
-            ConfigSwitch {
-                Layout.fillWidth: false
-                buttonIcon: "check"
-                text: Translation.tr("Enable")
-                checked: Config.options.background.widgets.clock.enable
-                onCheckedChanged: {
-                    Config.options.background.widgets.clock.enable = checked;
-                }
-            }
-            Item {
-                Layout.fillWidth: true
-            }
-            ConfigSelectionArray {
-                Layout.fillWidth: false
-                currentValue: Config.options.background.widgets.clock.placementStrategy
-                onSelected: newValue => {
-                    Config.options.background.widgets.clock.placementStrategy = newValue;
-                }
-                options: [
-                    {
-                        displayName: Translation.tr("Draggable"),
-                        icon: "drag_pan",
-                        value: "free"
-                    },
-                    {
-                        displayName: Translation.tr("Least busy"),
-                        icon: "category",
-                        value: "leastBusy"
-                    },
-                    {
-                        displayName: Translation.tr("Most busy"),
-                        icon: "shapes",
-                        value: "mostBusy"
-                    },
-                ]
-            }
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.clock
         }
 
         ConfigSwitch {
@@ -576,45 +553,8 @@ ContentPage {
         icon: "weather_mix"
         title: Translation.tr("Widget: Weather")
 
-        ConfigRow {
-            Layout.fillWidth: true
-
-            ConfigSwitch {
-                Layout.fillWidth: false
-                buttonIcon: "check"
-                text: Translation.tr("Enable")
-                checked: Config.options.background.widgets.weather.enable
-                onCheckedChanged: {
-                    Config.options.background.widgets.weather.enable = checked;
-                }
-            }
-            Item {
-                Layout.fillWidth: true
-            }
-            ConfigSelectionArray {
-                Layout.fillWidth: false
-                currentValue: Config.options.background.widgets.weather.placementStrategy
-                onSelected: newValue => {
-                    Config.options.background.widgets.weather.placementStrategy = newValue;
-                }
-                options: [
-                    {
-                        displayName: Translation.tr("Draggable"),
-                        icon: "drag_pan",
-                        value: "free"
-                    },
-                    {
-                        displayName: Translation.tr("Least busy"),
-                        icon: "category",
-                        value: "leastBusy"
-                    },
-                    {
-                        displayName: Translation.tr("Most busy"),
-                        icon: "shapes",
-                        value: "mostBusy"
-                    },
-                ]
-            }
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.weather
         }
     }
 
@@ -957,46 +897,172 @@ ContentPage {
         }
     }
 
-    component WidgetPlacementRow: ConfigRow {
+    ContentSection {
+        icon: "commit"
+        title: Translation.tr("Widget: Git Pulse")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.gitPulse
+        }
+
+        ConfigRow {
+            uniform: true
+            ConfigSwitch {
+                buttonIcon: "filter_alt"
+                text: Translation.tr("Show clean repos")
+                checked: Config.options.background.widgets.gitPulse.showClean
+                onCheckedChanged: {
+                    Config.options.background.widgets.gitPulse.showClean = checked;
+                }
+            }
+            ConfigSwitch {
+                buttonIcon: "visibility_off"
+                text: Translation.tr("Hide when all clean")
+                checked: Config.options.background.widgets.gitPulse.hideWhenClean
+                onCheckedChanged: {
+                    Config.options.background.widgets.gitPulse.hideWhenClean = checked;
+                }
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "format_list_numbered"
+            text: Translation.tr("Max visible repositories")
+            value: Config.options.background.widgets.gitPulse.maxItems
+            from: 1
+            to: 12
+            stepSize: 1
+            onValueChanged: {
+                Config.options.background.widgets.gitPulse.maxItems = value;
+            }
+        }
+    }
+
+    ContentSection {
+        icon: "deployed_code"
+        title: Translation.tr("Widget: Docker Containers")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.docker
+        }
+
+        ConfigSwitch {
+            buttonIcon: "visibility_off"
+            text: Translation.tr("Hide when daemon is stopped")
+            checked: Config.options.background.widgets.docker.hideWhenOff
+            onCheckedChanged: {
+                Config.options.background.widgets.docker.hideWhenOff = checked;
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "format_list_numbered"
+            text: Translation.tr("Max visible containers")
+            value: Config.options.background.widgets.docker.maxItems
+            from: 1
+            to: 12
+            stepSize: 1
+            onValueChanged: {
+                Config.options.background.widgets.docker.maxItems = value;
+            }
+        }
+    }
+
+    ContentSection {
+        icon: "local_fire_department"
+        title: Translation.tr("Widget: GitHub Contributions")
+
+        WidgetPlacementRow {
+            widgetConfig: Config.options.background.widgets.githubStreak
+        }
+
+        ConfigSwitch {
+            buttonIcon: "palette"
+            text: Translation.tr("Classic GitHub green palette")
+            checked: Config.options.background.widgets.githubStreak.useGithubGreen
+            onCheckedChanged: {
+                Config.options.background.widgets.githubStreak.useGithubGreen = checked;
+            }
+        }
+
+        ConfigSpinBox {
+            icon: "date_range"
+            text: Translation.tr("Weeks displayed")
+            value: Config.options.background.widgets.githubStreak.weeksShown
+            from: 8
+            to: 36
+            stepSize: 2
+            onValueChanged: {
+                Config.options.background.widgets.githubStreak.weeksShown = value;
+            }
+        }
+
+        MaterialTextArea {
+            Layout.fillWidth: true
+            placeholderText: Translation.tr("GitHub username")
+            text: Config.options.background.widgets.githubStreak.username
+            onTextChanged: {
+                Config.options.background.widgets.githubStreak.username = text.trim();
+            }
+        }
+    }
+
+    component WidgetPlacementRow: ColumnLayout {
         id: placementRow
         required property var widgetConfig
         Layout.fillWidth: true
+        spacing: 4
+
+        ConfigRow {
+            Layout.fillWidth: true
+
+            ConfigSwitch {
+                Layout.fillWidth: false
+                buttonIcon: "check"
+                text: Translation.tr("Enable")
+                checked: placementRow.widgetConfig.enable
+                onCheckedChanged: {
+                    placementRow.widgetConfig.enable = checked;
+                }
+            }
+            Item {
+                Layout.fillWidth: true
+            }
+            ConfigSelectionArray {
+                Layout.fillWidth: false
+                currentValue: placementRow.widgetConfig.placementStrategy
+                onSelected: newValue => {
+                    placementRow.widgetConfig.placementStrategy = newValue;
+                }
+                options: [
+                    {
+                        displayName: Translation.tr("Draggable"),
+                        icon: "drag_pan",
+                        value: "free"
+                    },
+                    {
+                        displayName: Translation.tr("Least busy"),
+                        icon: "category",
+                        value: "leastBusy"
+                    },
+                    {
+                        displayName: Translation.tr("Most busy"),
+                        icon: "shapes",
+                        value: "mostBusy"
+                    },
+                ]
+            }
+        }
 
         ConfigSwitch {
-            Layout.fillWidth: false
-            buttonIcon: "check"
-            text: Translation.tr("Enable")
-            checked: placementRow.widgetConfig.enable
+            buttonIcon: (placementRow.widgetConfig.locked || Config.options.background.widgets.lockAll) ? "lock" : "lock_open"
+            text: Config.options.background.widgets.lockAll
+                ? Translation.tr("Lock position (global lock active)")
+                : Translation.tr("Lock position")
+            checked: placementRow.widgetConfig.locked
             onCheckedChanged: {
-                placementRow.widgetConfig.enable = checked;
+                placementRow.widgetConfig.locked = checked;
             }
-        }
-        Item {
-            Layout.fillWidth: true
-        }
-        ConfigSelectionArray {
-            Layout.fillWidth: false
-            currentValue: placementRow.widgetConfig.placementStrategy
-            onSelected: newValue => {
-                placementRow.widgetConfig.placementStrategy = newValue;
-            }
-            options: [
-                {
-                    displayName: Translation.tr("Draggable"),
-                    icon: "drag_pan",
-                    value: "free"
-                },
-                {
-                    displayName: Translation.tr("Least busy"),
-                    icon: "category",
-                    value: "leastBusy"
-                },
-                {
-                    displayName: Translation.tr("Most busy"),
-                    icon: "shapes",
-                    value: "mostBusy"
-                },
-            ]
         }
     }
 }

@@ -18,6 +18,9 @@ AbstractWidget {
     property bool visibleWhenLocked: false
     property var configEntry: Config.options.background.widgets[configEntryName]
     property string placementStrategy: configEntry.placementStrategy
+    readonly property bool globalLocked: Config.options.background.widgets.lockAll ?? false
+    readonly property bool widgetLocked: configEntry?.locked ?? false
+    readonly property bool positionLocked: globalLocked || widgetLocked
     property real targetX: Math.max(0, Math.min(configEntry.x, scaledScreenWidth - width))
     property real targetY : Math.max(0, Math.min(configEntry.y, scaledScreenHeight - height))
     x: targetX
@@ -32,12 +35,36 @@ AbstractWidget {
         animation: Appearance.animation.elementResize.numberAnimation.createObject(this)
     }
 
-    draggable: placementStrategy === "free"
-    onReleased: {
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    draggable: placementStrategy === "free" && !positionLocked
+    onReleased: mouse => {
+        if (!root.draggable || mouse.button !== Qt.LeftButton) return;
         root.targetX = root.x;
         root.targetY = root.y;
         configEntry.x = root.targetX;
         configEntry.y = root.targetY;
+    }
+    onClicked: mouse => {
+        if (mouse.button !== Qt.RightButton) return;
+        if (root.globalLocked) {
+            Quickshell.execDetached([
+                "notify-send", "-u", "low", "-t", "2000",
+                "-i", "object-locked-symbolic",
+                "-a", "Desktop Widgets",
+                "All Widgets Locked",
+                "Turn off 'Lock all widget positions' in Background Settings or run: qs -c ii ipc call widgets toggleLock"
+            ]);
+            return;
+        }
+        const nextLocked = !(configEntry.locked ?? false);
+        configEntry.locked = nextLocked;
+        Quickshell.execDetached([
+            "notify-send", "-u", "low", "-t", "1600",
+            "-i", nextLocked ? "object-locked-symbolic" : "object-unlocked-symbolic",
+            "-a", "Desktop Widgets",
+            nextLocked ? "Widget Locked" : "Widget Unlocked",
+            `${root.configEntryName} position ${nextLocked ? "locked" : "unlocked"}.`
+        ]);
     }
 
     property bool needsColText: false
@@ -54,13 +81,14 @@ AbstractWidget {
     
     onWallpaperPathChanged: refreshPlacementIfNeeded()
     onPlacementStrategyChanged: refreshPlacementIfNeeded()
+    onPositionLockedChanged: refreshPlacementIfNeeded()
     Connections {
         target: Config
         function onReadyChanged() { refreshPlacementIfNeeded() }
     }
     function refreshPlacementIfNeeded() {
         if (!Config.ready) return;
-        if (root.placementStrategy === "free" && !root.needsColText) return;
+        if ((root.placementStrategy === "free" || root.positionLocked) && !root.needsColText) return;
         leastBusyRegionProc.wallpaperPath = root.wallpaperPath;
         leastBusyRegionProc.running = false;
         leastBusyRegionProc.running = true;
@@ -92,7 +120,7 @@ AbstractWidget {
                 if (output.length === 0) return;
                 const parsedContent = JSON.parse(output);
                 root.dominantColor = parsedContent.dominant_color || Appearance.colors.colPrimary;
-                if (root.placementStrategy === "free") return;
+                if (root.placementStrategy === "free" || root.positionLocked) return;
                 root.targetX = parsedContent.center_x * root.wallpaperScale - root.width / 2;
                 root.targetY  = parsedContent.center_y * root.wallpaperScale - root.height / 2;
             }

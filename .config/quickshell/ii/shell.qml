@@ -67,6 +67,30 @@ ShellRoot {
         }
     }
 
+    IpcHandler {
+        target: "widgets"
+
+        function toggleLock(): void {
+            const next = !Config.options.background.widgets.lockAll;
+            Config.options.background.widgets.lockAll = next;
+            Quickshell.execDetached([
+                "notify-send", "-u", "low", "-t", "1600",
+                "-i", next ? "object-locked-symbolic" : "object-unlocked-symbolic",
+                "-a", "Desktop Widgets",
+                next ? "Widgets Locked" : "Widgets Unlocked",
+                next ? "All desktop widget positions are locked." : "Draggable desktop widgets can now be moved."
+            ]);
+        }
+
+        function lock(): void {
+            Config.options.background.widgets.lockAll = true;
+        }
+
+        function unlock(): void {
+            Config.options.background.widgets.lockAll = false;
+        }
+    }
+
     GlobalShortcut {
         name: "panelFamilyCycle"
         description: "Cycles panel family"

@@ -23,6 +23,9 @@ import qs.modules.ii.background.widgets.photo
 import qs.modules.ii.background.widgets.music
 import qs.modules.ii.background.widgets.devserver
 import qs.modules.ii.background.widgets.calendar
+import qs.modules.ii.background.widgets.gitpulse
+import qs.modules.ii.background.widgets.docker
+import qs.modules.ii.background.widgets.githubstreak
 
 Variants {
     id: root
@@ -342,6 +345,39 @@ Variants {
                 FadeLoader {
                     shown: Config.options.background.widgets.calendar.enable
                     sourceComponent: CalendarWidget {
+                        screenWidth: bgRoot.screen.width
+                        screenHeight: bgRoot.screen.height
+                        scaledScreenWidth: bgRoot.screen.width
+                        scaledScreenHeight: bgRoot.screen.height
+                        wallpaperScale: 1
+                    }
+                }
+
+                FadeLoader {
+                    shown: Config.options.background.widgets.gitPulse.enable
+                    sourceComponent: GitPulseWidget {
+                        screenWidth: bgRoot.screen.width
+                        screenHeight: bgRoot.screen.height
+                        scaledScreenWidth: bgRoot.screen.width
+                        scaledScreenHeight: bgRoot.screen.height
+                        wallpaperScale: 1
+                    }
+                }
+
+                FadeLoader {
+                    shown: Config.options.background.widgets.docker.enable
+                    sourceComponent: DockerWidget {
+                        screenWidth: bgRoot.screen.width
+                        screenHeight: bgRoot.screen.height
+                        scaledScreenWidth: bgRoot.screen.width
+                        scaledScreenHeight: bgRoot.screen.height
+                        wallpaperScale: 1
+                    }
+                }
+
+                FadeLoader {
+                    shown: Config.options.background.widgets.githubStreak.enable
+                    sourceComponent: GitHubStreakWidget {
                         screenWidth: bgRoot.screen.width
                         screenHeight: bgRoot.screen.height
                         scaledScreenWidth: bgRoot.screen.width
