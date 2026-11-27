@@ -12,7 +12,10 @@ hl.bind(mainMod .. " + Grave", hl.dsp.workspace.toggle_special("special"), { des
 -- 2. DAILY APPS
 hl.unbind(mainMod .. " + E")
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("nautilus --new-window"))
+hl.unbind(mainMod .. " + B")
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("zen-browser"))
+hl.unbind(mainMod .. " + O")
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("bash /home/Shuu/.config/hypr/scripts/obsidian_launch.sh"), { description = "App: Obsidian (Focus or Launch)" })
 
 -- 3. SCREENSHOTS (Quickshell Overlay: Super+Shift+S | Quick Slurp: Super+Alt+S | Fullscreen: Print)
 hl.unbind(mainMod .. " + ALT + S")
