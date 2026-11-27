@@ -59,7 +59,7 @@ AbstractBackgroundWidget {
     Timer {
         id: pollTimer
         interval: 30000
-        running: Config.options.background.widgets.devServer.enable && !GlobalStates.screenLocked
+        running: Config.options.background.widgets.devServer.enable && root.pollingActive
         repeat: true
         triggeredOnStart: true
         onTriggered: root.refreshPorts()

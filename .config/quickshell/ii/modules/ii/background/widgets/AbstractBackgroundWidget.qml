@@ -16,11 +16,13 @@ AbstractWidget {
     required property int scaledScreenHeight
     required property real wallpaperScale
     property bool visibleWhenLocked: false
+    property bool backgroundVisible: true
     property var configEntry: Config.options.background.widgets[configEntryName]
     property string placementStrategy: configEntry.placementStrategy
     readonly property bool globalLocked: Config.options.background.widgets.lockAll ?? false
     readonly property bool widgetLocked: configEntry?.locked ?? false
     readonly property bool positionLocked: globalLocked || widgetLocked
+    readonly property bool pollingActive: backgroundVisible && !GlobalStates.screenLocked
     property real targetX: Math.max(0, Math.min(configEntry.x, scaledScreenWidth - width))
     property real targetY : Math.max(0, Math.min(configEntry.y, scaledScreenHeight - height))
     x: targetX

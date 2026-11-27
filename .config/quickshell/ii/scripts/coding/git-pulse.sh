@@ -13,19 +13,52 @@ CLEAN_OUT=""
 
 while IFS= read -r repo; do
     [ -n "$repo" ] && [ -d "$repo/.git" ] || continue
-    name=$(basename "$repo")
-    branch=$(git -C "$repo" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")
-    dirty=$(git -C "$repo" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-    counts=$(git -C "$repo" rev-list --left-right --count '@{u}...HEAD' 2>/dev/null || echo "0 0")
-    behind=$(printf "%s" "$counts" | awk '{print $1+0}')
-    ahead=$(printf "%s" "$counts" | awk '{print $2+0}')
+    name="${repo##*/}"
+    branch="HEAD"
+    oid=""
+    ahead=0
+    behind=0
+    dirty=0
+
+    while IFS= read -r sline; do
+        case "$sline" in
+            "# branch.oid "*)
+                oid="${sline#\# branch.oid }"
+                ;;
+            "# branch.head "*)
+                branch="${sline#\# branch.head }"
+                ;;
+            "# branch.ab "*)
+                ab="${sline#\# branch.ab }"
+                ahead="${ab%% *}"
+                ahead="${ahead#+}"
+                behind="${ab##* }"
+                behind="${behind#-}"
+                ;;
+            "# "*)
+                ;;
+            "")
+                ;;
+            *)
+                dirty=$((dirty + 1))
+                ;;
+        esac
+    done < <(git -C "$repo" status --porcelain=v2 --branch 2>/dev/null)
+
+    if [ "$branch" = "(detached)" ]; then
+        if [ -n "$oid" ] && [ "$oid" != "(initial)" ]; then
+            branch="${oid:0:7}"
+        else
+            branch="HEAD"
+        fi
+    fi
 
     line="${repo}|${name}|${branch}|${dirty}|${ahead}|${behind}"
     if [ "$dirty" -gt 0 ] || [ "$ahead" -gt 0 ] || [ "$behind" -gt 0 ]; then
-        DIRTY_OUT="${DIRTY_OUT}${line}\n"
+        DIRTY_OUT+="${line}"$'\n'
     elif [ "$SHOW_CLEAN" = "1" ]; then
-        CLEAN_OUT="${CLEAN_OUT}${line}\n"
+        CLEAN_OUT+="${line}"$'\n'
     fi
 done <<< "$REPOS"
 
-printf "%b%b" "$DIRTY_OUT" "$CLEAN_OUT"
+printf "%s%s" "$DIRTY_OUT" "$CLEAN_OUT"

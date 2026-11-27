@@ -55,7 +55,7 @@ AbstractBackgroundWidget {
     Timer {
         id: pollTimer
         interval: 30000
-        running: Config.options.background.widgets.gitPulse.enable && !GlobalStates.screenLocked
+        running: Config.options.background.widgets.gitPulse.enable && root.pollingActive
         repeat: true
         triggeredOnStart: true
         onTriggered: root.refreshRepos()

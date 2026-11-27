@@ -60,7 +60,7 @@ AbstractBackgroundWidget {
     Timer {
         id: pollTimer
         interval: 30000
-        running: Config.options.background.widgets.docker.enable && !GlobalStates.screenLocked
+        running: Config.options.background.widgets.docker.enable && root.pollingActive
         repeat: true
         triggeredOnStart: true
         onTriggered: root.refreshDocker()

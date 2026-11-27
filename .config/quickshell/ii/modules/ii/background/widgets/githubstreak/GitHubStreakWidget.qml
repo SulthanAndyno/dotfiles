@@ -34,6 +34,7 @@ AbstractBackgroundWidget {
     property bool isCached: false
     property bool hasError: false
     property var hoveredDay: null
+    property double lastFetchMs: 0
 
     readonly property int cellSize: weeksShown > 26 ? 9 : 11
     readonly property int cellGap: 3
@@ -53,6 +54,7 @@ AbstractBackgroundWidget {
 
     function refreshGraph() {
         if (fetchProc.running) return;
+        root.lastFetchMs = Date.now();
         const scriptPath = FileUtils.trimFileProtocol(`${Directories.scriptPath}/coding/github-streak.py`);
         fetchProc.command = ["python3", scriptPath, root.configuredUsername, String(root.weeksShown)];
         fetchProc.running = true;
@@ -95,10 +97,14 @@ AbstractBackgroundWidget {
     Timer {
         id: pollTimer
         interval: 900000 // 15 minutes
-        running: Config.options.background.widgets.githubStreak.enable && !GlobalStates.screenLocked
+        running: Config.options.background.widgets.githubStreak.enable && root.pollingActive
         repeat: true
         triggeredOnStart: true
-        onTriggered: root.refreshGraph()
+        onTriggered: {
+            if (root.weeks.length === 0 || (Date.now() - root.lastFetchMs) >= 300000) {
+                root.refreshGraph();
+            }
+        }
     }
 
     Process {

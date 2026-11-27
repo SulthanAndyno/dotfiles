@@ -339,6 +339,7 @@ Variants {
                         scaledScreenWidth: bgRoot.screen.width
                         scaledScreenHeight: bgRoot.screen.height
                         wallpaperScale: 1
+                        backgroundVisible: bgRoot.visible
                     }
                 }
 
@@ -361,6 +362,7 @@ Variants {
                         scaledScreenWidth: bgRoot.screen.width
                         scaledScreenHeight: bgRoot.screen.height
                         wallpaperScale: 1
+                        backgroundVisible: bgRoot.visible
                     }
                 }
 
@@ -372,6 +374,7 @@ Variants {
                         scaledScreenWidth: bgRoot.screen.width
                         scaledScreenHeight: bgRoot.screen.height
                         wallpaperScale: 1
+                        backgroundVisible: bgRoot.visible
                     }
                 }
 
@@ -383,6 +386,7 @@ Variants {
                         scaledScreenWidth: bgRoot.screen.width
                         scaledScreenHeight: bgRoot.screen.height
                         wallpaperScale: 1
+                        backgroundVisible: bgRoot.visible
                     }
                 }
             }
